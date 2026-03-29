@@ -1,0 +1,230 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>冒险岛2 账号注册</title>
+  <style>
+    :root {
+      --bg: #f4efe5;
+      --panel: rgba(255, 250, 240, 0.92);
+      --panel-border: rgba(125, 84, 42, 0.2);
+      --text: #2e2419;
+      --muted: #6d5a47;
+      --accent: #b65c2f;
+      --accent-strong: #924120;
+      --success: #246b45;
+      --error: #9d2f2f;
+      --shadow: rgba(68, 42, 16, 0.18);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(255, 224, 167, 0.85), transparent 32%),
+        radial-gradient(circle at bottom right, rgba(224, 143, 89, 0.55), transparent 28%),
+        linear-gradient(160deg, #f7f1e7 0%, #f0e3cf 42%, #ead7bb 100%);
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .card {
+      width: min(100%, 460px);
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 24px;
+      box-shadow: 0 24px 60px var(--shadow);
+      padding: 32px 28px 28px;
+      backdrop-filter: blur(10px);
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 32px;
+      line-height: 1.1;
+    }
+
+    .intro, .hint, .link-row {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .intro { margin: 12px 0 18px; }
+    .hint { margin: 12px 0 0; font-size: 13px; }
+    .link-row { margin: 16px 0 0; font-size: 14px; }
+
+    form { display: grid; gap: 14px; }
+
+    label {
+      display: grid;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    input {
+      width: 100%;
+      border: 1px solid rgba(109, 90, 71, 0.25);
+      border-radius: 14px;
+      padding: 13px 14px;
+      font-size: 15px;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.85);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: rgba(182, 92, 47, 0.8);
+      box-shadow: 0 0 0 4px rgba(182, 92, 47, 0.12);
+      transform: translateY(-1px);
+    }
+
+    button {
+      margin-top: 6px;
+      border: 0;
+      border-radius: 16px;
+      padding: 14px 18px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #fffaf3;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%);
+      cursor: pointer;
+      box-shadow: 0 14px 28px rgba(146, 65, 32, 0.24);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 30px rgba(146, 65, 32, 0.3);
+    }
+
+    button:disabled {
+      cursor: wait;
+      opacity: 0.7;
+    }
+
+    a {
+      color: var(--accent-strong);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    a:hover { text-decoration: underline; }
+
+    .status {
+      min-height: 24px;
+      margin-top: 14px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .status.success { color: var(--success); }
+    .status.error { color: var(--error); }
+
+    @media (max-width: 520px) {
+      .card { padding: 26px 20px 22px; }
+      h1 { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <p class="eyebrow">冒险岛2账号</p>
+    <h1>注册账号</h1>
+    <p class="intro">请先在这里完成账号注册，然后回到游戏客户端登录。QQ号和手机号将用于找回密码和信息维护，请填写真实可用信息。</p>
+
+    <form id="register-form">
+      <label>
+        账号名
+        <input id="username" name="username" type="text" minlength="3" maxlength="16" autocomplete="username" required>
+      </label>
+
+      <label>
+        密码
+        <input id="password" name="password" type="password" minlength="6" maxlength="72" autocomplete="new-password" required>
+      </label>
+
+      <label>
+        确认密码
+        <input id="confirmPassword" name="confirmPassword" type="password" minlength="6" maxlength="72" autocomplete="new-password" required>
+      </label>
+
+      <label>
+        QQ号
+        <input id="qqNumber" name="qqNumber" type="text" inputmode="numeric" autocomplete="off" required>
+      </label>
+
+      <label>
+        手机号
+        <input id="phoneNumber" name="phoneNumber" type="text" inputmode="numeric" autocomplete="tel" required>
+      </label>
+
+      <button id="submit" type="submit">立即注册</button>
+    </form>
+
+    <div id="status" class="status" aria-live="polite"></div>
+    <p class="hint">账号名仅支持小写字母、数字和下划线，长度 3-16 位；密码长度为 6-72 位。</p>
+    <p class="link-row"><a href="/">返回服务大厅</a>　|　忘记密码？<a href="/reset-password.html">前往密码找回</a>　|　已有卡密？<a href="/recharge.html">前往点卡充值</a></p>
+  </main>
+
+  <script>
+    const form = document.getElementById("register-form");
+    const submitButton = document.getElementById("submit");
+    const status = document.getElementById("status");
+
+    function setStatus(message, type) {
+      status.textContent = message;
+      status.className = type ? "status " + type : "status";
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      setStatus("", "");
+      submitButton.disabled = true;
+
+      const payload = {
+        username: document.getElementById("username").value,
+        password: document.getElementById("password").value,
+        confirmPassword: document.getElementById("confirmPassword").value,
+        qqNumber: document.getElementById("qqNumber").value,
+        phoneNumber: document.getElementById("phoneNumber").value
+      };
+
+      try {
+        const response = await fetch("/api/account/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+        setStatus(result.message || "请求已完成。", response.ok ? "success" : "error");
+
+        if (response.ok) {
+          form.reset();
+        }
+      } catch (error) {
+        setStatus("注册请求失败，请稍后再试。", "error");
+      } finally {
+        submitButton.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

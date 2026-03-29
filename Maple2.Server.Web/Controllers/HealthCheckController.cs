@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Maple2.Server.Web.Controllers;
 
-[Route("/")]
+[Route("health")]
 public class HealthCheckController : ControllerBase {
 
     [HttpGet("")]

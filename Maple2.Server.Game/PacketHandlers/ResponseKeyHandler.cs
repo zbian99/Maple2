@@ -1,5 +1,7 @@
-﻿using Grpc.Core;
+using Grpc.Core;
+using Maple2.Database.Storage;
 using Maple2.Model.Game;
+using Maple2.Model.Metadata;
 using Maple2.PacketLib.Tools;
 using Maple2.Server.Core.Constants;
 using Maple2.Server.Game.PacketHandlers.Field;
@@ -29,6 +31,14 @@ public class ResponseKeyHandler : FieldPacketHandler {
         try {
             Logger.Information("LOGIN USER TO GAME: {AccountId}", accountId);
 
+            using GameStorage.Request db = session.GameStorage.Context();
+            DateTime? expireAt = db.GetAccountExpireAt(accountId);
+            if (expireAt == null || expireAt <= DateTime.UtcNow) {
+                session.Send(NoticePacket.Disconnect(new InterfaceText(Constant.AccountExpiredMessage)));
+                session.Disconnect();
+                return;
+            }
+
             var request = new MigrateInRequest {
                 AccountId = accountId,
                 Token = token,
@@ -37,7 +47,8 @@ public class ResponseKeyHandler : FieldPacketHandler {
 
             MigrateInResponse response = World.MigrateIn(request);
             if (!session.EnterServer(accountId, machineId, response)) {
-                throw new InvalidOperationException($"Invalid player: {accountId}, {response.CharacterId}");
+                session.Disconnect();
+                return;
             }
 
             // Finalize

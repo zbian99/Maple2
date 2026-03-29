@@ -199,9 +199,12 @@ public static class Constant {
     #endregion
 
     #region Account
-    public static readonly bool AutoRegister = true;
+    public static readonly bool AutoRegister = false;
     public static readonly bool BlockLoginWithMismatchedMachineId = false;
     public static readonly int DefaultMaxCharacters = 4;
+    public static readonly TimeSpan TrialAccountDuration = TimeSpan.FromDays(3);
+    public static readonly TimeSpan AccountExpiryCheckInterval = TimeSpan.FromSeconds(60);
+    public const string AccountExpiredMessage = "账号游戏时间已到期，请先充值点卡。";
     #endregion
 
     // TODO: Remove once NpcMetadataDistance handles these at runtime, since they are now in DB and parsed through file ingest.

@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>冒险岛2 服务大厅</title>
+  <style>
+    :root {
+      --bg-top: #fff3df;
+      --bg-bottom: #efd8b7;
+      --panel: rgba(255, 249, 241, 0.88);
+      --panel-border: rgba(122, 80, 40, 0.18);
+      --text: #2f241a;
+      --muted: #6b5846;
+      --accent: #bc5c2b;
+      --accent-strong: #8d3f1a;
+      --shadow: rgba(80, 45, 16, 0.18);
+      --card-shadow: rgba(117, 67, 34, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(255, 223, 170, 0.9), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(212, 138, 89, 0.5), transparent 28%),
+        linear-gradient(155deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .shell {
+      width: min(1080px, 100%);
+      display: grid;
+      gap: 22px;
+    }
+
+    .hero,
+    .service-card {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 28px;
+      box-shadow: 0 24px 60px var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .hero {
+      padding: 34px 30px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .eyebrow {
+      margin: 0;
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 800;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 52px);
+      line-height: 1.05;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 760px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.8;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-top: 6px;
+    }
+
+    .stat {
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.5);
+      border: 1px solid rgba(122, 80, 40, 0.12);
+    }
+
+    .stat strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 16px;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .service-card {
+      padding: 24px 22px;
+      display: grid;
+      gap: 14px;
+      align-content: start;
+      box-shadow: 0 18px 40px var(--card-shadow);
+    }
+
+    .service-tag {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(188, 92, 43, 0.12);
+      color: var(--accent-strong);
+    }
+
+    .service-card h2 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.2;
+    }
+
+    .service-card p {
+      margin: 0;
+      min-height: 72px;
+      color: var(--muted);
+      line-height: 1.75;
+      font-size: 14px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      border-radius: 16px;
+      font-weight: 700;
+      color: #fffaf3;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%);
+      box-shadow: 0 14px 28px rgba(141, 63, 26, 0.22);
+      text-decoration: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 30px rgba(141, 63, 26, 0.28);
+    }
+
+    .footer-note {
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+      line-height: 1.7;
+    }
+
+    .notice-board {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 18px;
+    }
+
+    .notice,
+    .quick-panel {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 24px;
+      box-shadow: 0 18px 40px var(--card-shadow);
+      padding: 24px 22px;
+    }
+
+    .section-title {
+      margin: 0 0 10px;
+      font-size: 22px;
+      line-height: 1.2;
+    }
+
+    .notice-list,
+    .quick-list {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 14px;
+    }
+
+    .quick-list code {
+      color: var(--accent-strong);
+    }
+
+    @media (max-width: 720px) {
+      body { padding: 16px; }
+      .hero { padding: 28px 22px; }
+      .service-card { padding: 22px 18px; }
+      .service-card p { min-height: 0; }
+      .notice-board { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <div class="hero-top">
+        <div>
+          <p class="eyebrow">MapleStory 2 Web</p>
+          <h1>冒险岛2服务大厅</h1>
+        </div>
+      </div>
+      <p>这里整理了当前 Web 端可用的账号与点卡服务。玩家可以在这里完成账号注册、密码找回和点卡充值，管理人员也可以进入点卡后台。</p>
+      <p>如果你只是来玩游戏，通常先去注册账号或找回密码，再回到客户端登录即可。</p>
+
+      <div class="hero-stats">
+        <div class="stat">
+          <strong>账号注册</strong>
+          <span>统一由 Web 页面办理，客户端只保留登录。</span>
+        </div>
+        <div class="stat">
+          <strong>密码找回</strong>
+          <span>支持账号配合 QQ 号或手机号重置密码。</span>
+        </div>
+        <div class="stat">
+          <strong>点卡系统</strong>
+          <span>提供玩家充值入口，也提供后台卡密管理入口。</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="service-card">
+        <span class="service-tag">玩家服务</span>
+        <h2>注册账号</h2>
+        <p>创建新的游戏账号，并填写 QQ 号与手机号，用于密码找回和后续账号信息维护。</p>
+        <a class="button" href="/register.html">进入注册</a>
+      </article>
+
+      <article class="service-card">
+        <span class="service-tag">玩家服务</span>
+        <h2>找回密码</h2>
+        <p>通过账号加 QQ 号或手机号进行身份校验，校验通过后可以直接重置登录密码。</p>
+        <a class="button" href="/reset-password.html">找回密码</a>
+      </article>
+
+      <article class="service-card">
+        <span class="service-tag">玩家服务</span>
+        <h2>点卡充值</h2>
+        <p>输入账号、密码和卡密完成充值。充值成功后，时长会自动续到当前账号的到期时间上。</p>
+        <a class="button" href="/recharge.html">前往充值</a>
+      </article>
+
+      <article class="service-card">
+        <span class="service-tag">管理服务</span>
+        <h2>点卡后台</h2>
+        <p>管理员可在这里登录后台、生成卡密，并查看卡密使用状态和对应账号记录。</p>
+        <a class="button" href="/admin/time-card.html">进入后台</a>
+      </article>
+    </section>
+
+    <section class="notice-board">
+      <article class="notice">
+        <h2 class="section-title">使用说明</h2>
+        <ol class="notice-list">
+          <li>新玩家先进入“注册账号”，填写账号、密码、QQ 号和手机号。</li>
+          <li>忘记密码时使用“找回密码”，至少提供 QQ 号或手机号其中一项。</li>
+          <li>已有卡密时进入“点卡充值”，充值成功后即可继续游戏。</li>
+        </ol>
+      </article>
+
+      <aside class="quick-panel">
+        <h2 class="section-title">快捷入口</h2>
+        <ul class="quick-list">
+          <li>服务首页：<code>/</code></li>
+          <li>注册页面：<code>/register.html</code></li>
+          <li>密码找回：<code>/reset-password.html</code></li>
+          <li>点卡充值：<code>/recharge.html</code></li>
+          <li>健康检查：<code>/health</code></li>
+        </ul>
+      </aside>
+    </section>
+
+    <div class="footer-note">健康检查仍可通过 <code>/health</code> 访问，业务接口位于 <code>/api</code> 路径下。</div>
+  </main>
+</body>
+</html>

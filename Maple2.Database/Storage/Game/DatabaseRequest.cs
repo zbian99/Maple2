@@ -27,6 +27,11 @@ public abstract class DatabaseRequest<TContext>(TContext context, ILogger logger
         return true;
     }
 
+    public void Rollback() {
+        transaction?.Rollback();
+        transaction = null;
+    }
+
     public bool SaveChanges() {
         return Context.TrySaveChanges();
     }

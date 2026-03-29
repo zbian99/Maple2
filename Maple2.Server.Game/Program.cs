@@ -105,6 +105,7 @@ builder.Services.AddSingleton<GameServer>(provider => new GameServer(
     response.GameChannel
 ));
 builder.Services.AddHostedService<GameServer>(provider => provider.GetService<GameServer>()!);
+builder.Services.AddHostedService<AccountExpiryMonitorService>();
 
 builder.Services.AddGrpcHealthChecks();
 builder.Services.Configure<HealthCheckPublisherOptions>(options => {

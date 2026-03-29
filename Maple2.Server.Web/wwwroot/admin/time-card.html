@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>冒险岛2 点卡后台</title>
+  <style>
+    :root {
+      --bg: #f2efe9;
+      --panel: rgba(252, 249, 243, 0.96);
+      --panel-border: rgba(92, 68, 43, 0.18);
+      --text: #2f261d;
+      --muted: #6d5a47;
+      --accent: #8c5a22;
+      --accent-strong: #6d4316;
+      --success: #276848;
+      --error: #9e3030;
+      --shadow: rgba(68, 42, 16, 0.15);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at left top, rgba(255, 218, 168, 0.7), transparent 24%),
+        radial-gradient(circle at right bottom, rgba(204, 160, 104, 0.4), transparent 30%),
+        linear-gradient(145deg, #f8f3ea 0%, #ebe0cf 100%);
+      padding: 24px;
+    }
+
+    .shell {
+      width: min(100%, 1080px);
+      margin: 0 auto;
+      display: grid;
+      gap: 18px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 24px;
+      box-shadow: 0 24px 60px var(--shadow);
+      padding: 26px 24px;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    h1, h2 { margin: 0; line-height: 1.15; }
+    h1 { font-size: 34px; }
+    h2 { font-size: 22px; }
+    p { color: var(--muted); line-height: 1.6; }
+
+    form { display: grid; gap: 14px; }
+
+    .row {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    input, select {
+      width: 100%;
+      border: 1px solid rgba(109, 90, 71, 0.25);
+      border-radius: 14px;
+      padding: 13px 14px;
+      font-size: 15px;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: rgba(140, 90, 34, 0.85);
+      box-shadow: 0 0 0 4px rgba(140, 90, 34, 0.12);
+    }
+
+    button, .home-link {
+      border: 0;
+      border-radius: 16px;
+      padding: 13px 16px;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    button {
+      color: #fffaf3;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%);
+      cursor: pointer;
+      box-shadow: 0 12px 24px rgba(109, 67, 22, 0.22);
+    }
+
+    .home-link,
+    button.secondary {
+      background: #f3e3cb;
+      color: var(--accent-strong);
+      box-shadow: none;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    button:disabled { cursor: wait; opacity: 0.7; }
+
+    .status {
+      min-height: 24px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .success { color: var(--success); }
+    .error { color: var(--error); }
+    .hidden { display: none; }
+
+    .codes {
+      margin-top: 16px;
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    .code-item {
+      border: 1px dashed rgba(140, 90, 34, 0.28);
+      border-radius: 14px;
+      padding: 12px 14px;
+      background: rgba(140, 90, 34, 0.06);
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 14px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+      font-size: 14px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 12px 10px;
+      border-bottom: 1px solid rgba(109, 90, 71, 0.14);
+      vertical-align: top;
+    }
+
+    th { color: var(--muted); font-weight: 700; }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(39, 104, 72, 0.1);
+      color: var(--success);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .pill.pending {
+      background: rgba(140, 90, 34, 0.1);
+      color: var(--accent-strong);
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 16px; }
+      .panel { padding: 22px 18px; }
+      h1 { font-size: 28px; }
+      table, thead, tbody, th, td, tr { display: block; }
+      thead { display: none; }
+      tr { padding: 10px 0; border-bottom: 1px solid rgba(109, 90, 71, 0.14); }
+      td { border: 0; padding: 6px 0; }
+      td::before {
+        content: attr(data-label) "：";
+        color: var(--muted);
+        font-weight: 700;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="panel">
+      <p class="eyebrow">冒险岛2后台</p>
+      <h1>点卡管理</h1>
+      <p>先输入后台管理密码登录，再生成卡密。后台使用短时 Cookie 会话，默认 30 分钟失效。</p>
+
+      <form id="login-form">
+        <div class="row">
+          <label>
+            管理密码
+            <input id="adminPassword" name="adminPassword" type="password" autocomplete="current-password" required>
+          </label>
+        </div>
+        <div class="toolbar">
+          <button id="loginButton" type="submit">登录后台</button>
+          <button id="logoutButton" type="button" class="secondary">退出登录</button>
+          <a class="home-link" href="/">返回服务大厅</a>
+        </div>
+      </form>
+
+      <div id="authStatus" class="status" aria-live="polite"></div>
+    </section>
+
+    <section id="dashboard" class="panel hidden">
+      <h2>生成卡密</h2>
+      <p>套餐固定为 1 天、7 天、30 天。套餐信息直接编码在卡密内容中，不单独写入数据库。</p>
+
+      <form id="generate-form">
+        <div class="row">
+          <label>
+            套餐
+            <select id="durationDays" name="durationDays">
+              <option value="1">1 天</option>
+              <option value="7">7 天</option>
+              <option value="30">30 天</option>
+            </select>
+          </label>
+
+          <label>
+            数量
+            <input id="quantity" name="quantity" type="number" min="1" max="200" value="1" required>
+          </label>
+        </div>
+
+        <button id="generateButton" type="submit">生成卡密</button>
+      </form>
+
+      <div id="generateStatus" class="status" aria-live="polite"></div>
+      <div id="generatedCodes" class="codes"></div>
+
+      <div class="toolbar">
+        <button id="refreshButton" type="button" class="secondary">刷新列表</button>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>卡密</th>
+            <th>套餐</th>
+            <th>状态</th>
+            <th>使用时间</th>
+            <th>使用账号</th>
+          </tr>
+        </thead>
+        <tbody id="cardTableBody"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script>
+    const loginForm = document.getElementById("login-form");
+    const generateForm = document.getElementById("generate-form");
+    const dashboard = document.getElementById("dashboard");
+    const authStatus = document.getElementById("authStatus");
+    const generateStatus = document.getElementById("generateStatus");
+    const generatedCodes = document.getElementById("generatedCodes");
+    const cardTableBody = document.getElementById("cardTableBody");
+    const loginButton = document.getElementById("loginButton");
+    const logoutButton = document.getElementById("logoutButton");
+    const generateButton = document.getElementById("generateButton");
+    const refreshButton = document.getElementById("refreshButton");
+
+    function setStatus(element, message, type) {
+      element.textContent = message;
+      element.className = type ? "status " + type : "status";
+    }
+
+    function setDashboardVisible(visible) {
+      dashboard.className = visible ? "panel" : "panel hidden";
+      if (!visible) {
+        generatedCodes.innerHTML = "";
+        cardTableBody.innerHTML = "";
+      }
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll("\"", "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    function formatDateTime(value) {
+      if (!value) {
+        return "-";
+      }
+
+      return new Date(value).toLocaleString("zh-CN", { hour12: false });
+    }
+
+    async function fetchCards(showUnauthorized = false) {
+      const response = await fetch("/api/admin/time-cards", {
+        credentials: "same-origin"
+      });
+
+      const result = await response.json();
+      if (!response.ok) {
+        cardTableBody.innerHTML = "";
+        setDashboardVisible(false);
+        if (showUnauthorized) {
+          setStatus(authStatus, result.message || "请先登录后台。", "error");
+        }
+        return false;
+      }
+
+      setDashboardVisible(true);
+      setStatus(authStatus, "后台会话有效。", "success");
+      renderTable(result.items || []);
+      return true;
+    }
+
+    function renderTable(items) {
+      if (!items.length) {
+        cardTableBody.innerHTML = '<tr><td data-label="卡密" colspan="5">暂无卡密记录。</td></tr>';
+        return;
+      }
+
+      cardTableBody.innerHTML = items.map((item) => {
+        const statusHtml = item.isUsed
+          ? '<span class="pill">已使用</span>'
+          : '<span class="pill pending">未使用</span>';
+
+        return "<tr>"
+          + '<td data-label="卡密">' + escapeHtml(item.cardCode) + "</td>"
+          + '<td data-label="套餐">' + escapeHtml(item.durationDays) + " 天</td>"
+          + '<td data-label="状态">' + statusHtml + "</td>"
+          + '<td data-label="使用时间">' + escapeHtml(formatDateTime(item.usedAt)) + "</td>"
+          + '<td data-label="使用账号">' + escapeHtml(item.usedByUsername || "-") + "</td>"
+          + "</tr>";
+      }).join("");
+    }
+
+    loginForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      loginButton.disabled = true;
+      setStatus(authStatus, "", "");
+
+      try {
+        const response = await fetch("/api/admin/login", {
+          method: "POST",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            password: document.getElementById("adminPassword").value
+          })
+        });
+
+        const result = await response.json();
+        setStatus(authStatus, result.message || "请求已完成。", response.ok ? "success" : "error");
+        if (response.ok) {
+          document.getElementById("adminPassword").value = "";
+          await fetchCards(false);
+        }
+      } catch (error) {
+        setStatus(authStatus, "后台登录请求失败，请稍后再试。", "error");
+      } finally {
+        loginButton.disabled = false;
+      }
+    });
+
+    logoutButton.addEventListener("click", async () => {
+      try {
+        await fetch("/api/admin/logout", {
+          method: "POST",
+          credentials: "same-origin"
+        });
+      } finally {
+        setDashboardVisible(false);
+        setStatus(authStatus, "已退出后台登录。", "success");
+      }
+    });
+
+    generateForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      generateButton.disabled = true;
+      generatedCodes.innerHTML = "";
+      setStatus(generateStatus, "", "");
+
+      try {
+        const response = await fetch("/api/admin/time-cards/generate", {
+          method: "POST",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            durationDays: Number(document.getElementById("durationDays").value),
+            quantity: Number(document.getElementById("quantity").value)
+          })
+        });
+
+        const result = await response.json();
+        setStatus(generateStatus, result.message || "请求已完成。", response.ok ? "success" : "error");
+
+        if (response.ok) {
+          generatedCodes.innerHTML = (result.cardCodes || [])
+            .map((code) => '<div class="code-item">' + escapeHtml(code) + "</div>")
+            .join("");
+          await fetchCards(false);
+        } else if (response.status === 401) {
+          setDashboardVisible(false);
+        }
+      } catch (error) {
+        setStatus(generateStatus, "生成卡密请求失败，请稍后再试。", "error");
+      } finally {
+        generateButton.disabled = false;
+      }
+    });
+
+    refreshButton.addEventListener("click", async () => {
+      refreshButton.disabled = true;
+      try {
+        await fetchCards(true);
+      } finally {
+        refreshButton.disabled = false;
+      }
+    });
+
+    fetchCards(false);
+  </script>
+</body>
+</html>

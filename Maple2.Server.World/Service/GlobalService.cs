@@ -88,6 +88,15 @@ public partial class GlobalService : Global.GlobalBase {
             });
         }
 
+        DateTime? expireAt = db.GetAccountExpireAt(account.Id);
+        if (expireAt == null || expireAt <= DateTime.UtcNow) {
+            return Task.FromResult(new LoginResponse {
+                Code = LoginResponse.Types.Code.Restricted,
+                Message = Constant.AccountExpiredMessage,
+                AccountId = account.Id,
+            });
+        }
+
         if (account.MachineId != machineId) {
             logger.Warning("MachineId mismatch for account {AccountId}", account.Id);
             if (Constant.BlockLoginWithMismatchedMachineId) {

@@ -7,12 +7,14 @@ using System.Net;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Maple2.Server.Core.Modules;
+using Maple2.Server.Web.Services;
 using Maple2.Tools;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -21,6 +23,7 @@ using Serilog;
 
 // Force Globalization to en-US because we use periods instead of commas for decimals
 CultureInfo.CurrentCulture = new("en-US");
+Console.OutputEncoding = System.Text.Encoding.UTF8;
 
 DotEnv.Load();
 
@@ -48,6 +51,8 @@ builder.WebHost.UseKestrel(options => {
 builder.Services.Configure<HostOptions>(options => options.ShutdownTimeout = TimeSpan.FromSeconds(15));
 builder.Services.AddMemoryCache();
 builder.Services.AddControllers();
+builder.Services.AddSingleton<AdminSessionService>();
+builder.Services.AddSingleton<TimeCardCodeService>();
 
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(dispose: true);
@@ -61,6 +66,15 @@ builder.Host.ConfigureContainer<ContainerBuilder>(autofac => {
 });
 
 WebApplication app = builder.Build();
+string webRoot = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+if (Directory.Exists(webRoot)) {
+    app.UseDefaultFiles(new DefaultFilesOptions {
+        FileProvider = new PhysicalFileProvider(webRoot),
+    });
+    app.UseStaticFiles(new StaticFileOptions {
+        FileProvider = new PhysicalFileProvider(webRoot),
+    });
+}
 app.MapControllers();
 
 var provider = app.Services.GetRequiredService<IActionDescriptorCollectionProvider>();

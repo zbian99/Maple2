@@ -6,6 +6,8 @@ namespace Maple2.Database.Context;
 
 public sealed class Ms2Context(DbContextOptions options) : DbContext(options) {
     internal DbSet<Account> Account { get; set; } = null!;
+    internal DbSet<AccountExtraInfo> AccountExtraInfo { get; set; } = null!;
+    internal DbSet<TimeCard> TimeCard { get; set; } = null!;
     internal DbSet<Character> Character { get; set; } = null!;
     internal DbSet<CharacterConfig> CharacterConfig { get; set; } = null!;
     internal DbSet<CharacterUnlock> CharacterUnlock { get; set; } = null!;
@@ -51,6 +53,8 @@ public sealed class Ms2Context(DbContextOptions options) : DbContext(options) {
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<Account>(Maple2.Database.Model.Account.Configure);
+        modelBuilder.Entity<AccountExtraInfo>(Maple2.Database.Model.AccountExtraInfo.Configure);
+        modelBuilder.Entity<TimeCard>(Maple2.Database.Model.TimeCard.Configure);
         modelBuilder.Entity<Character>(Maple2.Database.Model.Character.Configure);
         modelBuilder.Entity<CharacterConfig>(Maple2.Database.Model.CharacterConfig.Configure);
         modelBuilder.Entity<CharacterUnlock>(Maple2.Database.Model.CharacterUnlock.Configure);

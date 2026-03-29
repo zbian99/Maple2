@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>冒险岛2 点卡充值</title>
+  <style>
+    :root {
+      --bg: #e9efe8;
+      --panel: rgba(248, 252, 246, 0.95);
+      --panel-border: rgba(58, 91, 62, 0.18);
+      --text: #213126;
+      --muted: #566a59;
+      --accent: #2b7a4b;
+      --accent-strong: #1f5a37;
+      --success: #1d6a41;
+      --error: #9a2f2f;
+      --shadow: rgba(30, 70, 42, 0.16);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top right, rgba(186, 231, 190, 0.7), transparent 26%),
+        radial-gradient(circle at bottom left, rgba(118, 188, 138, 0.45), transparent 28%),
+        linear-gradient(150deg, #f4f9f1 0%, #ddebdc 100%);
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .card {
+      width: min(100%, 480px);
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 24px;
+      box-shadow: 0 24px 60px var(--shadow);
+      padding: 32px 28px 28px;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    h1 { margin: 0; font-size: 32px; line-height: 1.1; }
+    .intro, .hint, .link-row, .result-card { color: var(--muted); line-height: 1.6; }
+    .intro { margin: 12px 0 18px; }
+    .hint { margin: 12px 0 0; font-size: 13px; }
+    .link-row { margin: 16px 0 0; font-size: 14px; }
+
+    form { display: grid; gap: 14px; }
+    label { display: grid; gap: 6px; font-size: 14px; font-weight: 600; }
+
+    input {
+      width: 100%;
+      border: 1px solid rgba(86, 106, 89, 0.24);
+      border-radius: 14px;
+      padding: 13px 14px;
+      font-size: 15px;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    input:focus {
+      outline: none;
+      border-color: rgba(43, 122, 75, 0.82);
+      box-shadow: 0 0 0 4px rgba(43, 122, 75, 0.12);
+    }
+
+    button {
+      margin-top: 6px;
+      border: 0;
+      border-radius: 16px;
+      padding: 14px 18px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #f7fff9;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-strong) 100%);
+      cursor: pointer;
+      box-shadow: 0 14px 28px rgba(31, 90, 55, 0.22);
+    }
+
+    button:disabled { cursor: wait; opacity: 0.7; }
+
+    a {
+      color: var(--accent-strong);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    a:hover { text-decoration: underline; }
+
+    .status {
+      min-height: 24px;
+      margin-top: 14px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .status.success { color: var(--success); }
+    .status.error { color: var(--error); }
+
+    .result-card {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(43, 122, 75, 0.08);
+      border: 1px solid rgba(43, 122, 75, 0.12);
+      display: none;
+    }
+
+    .result-card.show { display: block; }
+
+    @media (max-width: 520px) {
+      .card { padding: 26px 20px 22px; }
+      h1 { font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <p class="eyebrow">冒险岛2账号</p>
+    <h1>点卡充值</h1>
+    <p class="intro">请输入账号、密码和卡密完成充值。为了避免卡密误充到其他账号，充值时会同步校验账号密码。</p>
+
+    <form id="recharge-form">
+      <label>
+        账号名
+        <input id="username" name="username" type="text" minlength="3" maxlength="16" autocomplete="username" required>
+      </label>
+
+      <label>
+        账号密码
+        <input id="password" name="password" type="password" minlength="6" maxlength="72" autocomplete="current-password" required>
+      </label>
+
+      <label>
+        卡密
+        <input id="cardCode" name="cardCode" type="text" autocomplete="off" required>
+      </label>
+
+      <button id="submit" type="submit">立即充值</button>
+    </form>
+
+    <div id="status" class="status" aria-live="polite"></div>
+    <div id="result" class="result-card"></div>
+    <p class="hint">卡密当前支持 1 天、7 天、30 天套餐。充值成功后，若账号已过期，则从当前时间开始续上；若未过期，则在原到期时间后顺延。</p>
+    <p class="link-row"><a href="/">返回服务大厅</a>　|　<a href="/register.html">注册账号</a>　|　<a href="/reset-password.html">找回密码</a></p>
+  </main>
+
+  <script>
+    const form = document.getElementById("recharge-form");
+    const submitButton = document.getElementById("submit");
+    const status = document.getElementById("status");
+    const result = document.getElementById("result");
+
+    function setStatus(message, type) {
+      status.textContent = message;
+      status.className = type ? "status " + type : "status";
+    }
+
+    function clearResult() {
+      result.className = "result-card";
+      result.innerHTML = "";
+    }
+
+    function showResult(data) {
+      const expireAt = data.expireAt ? new Date(data.expireAt).toLocaleString("zh-CN", { hour12: false }) : "-";
+      result.innerHTML = "本次充值时长：" + data.durationDays + " 天<br>最新到期时间：" + expireAt;
+      result.className = "result-card show";
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      setStatus("", "");
+      clearResult();
+      submitButton.disabled = true;
+
+      const payload = {
+        username: document.getElementById("username").value,
+        password: document.getElementById("password").value,
+        cardCode: document.getElementById("cardCode").value
+      };
+
+      try {
+        const response = await fetch("/api/account/redeem-time-card", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const resultData = await response.json();
+        setStatus(resultData.message || "请求已完成。", response.ok ? "success" : "error");
+
+        if (response.ok) {
+          showResult(resultData);
+          form.reset();
+        }
+      } catch (error) {
+        setStatus("充值请求失败，请稍后再试。", "error");
+      } finally {
+        submitButton.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
